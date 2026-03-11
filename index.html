@@ -3,234 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vibe Password Gen 1.7.0</title>
-    <style>
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-            -webkit-tap-highlight-color: transparent; 
-        }
-        
-        html, body {
-            width: 100%;
-            height: 100dvh;
-            background: radial-gradient(circle at center, #0d1a10 0%, #050505 70%);
-            font-family: 'Courier New', Courier, monospace;
-            color: #00ff41;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        @keyframes titleGlitch {
-            0% { text-shadow: 0 0 10px #00ff41, -2px 0 red, 2px 0 blue; }
-            95% { text-shadow: 0 0 10px #00ff41, -2px 0 red, 2px 0 blue; opacity: 1; }
-            96% { text-shadow: 0 0 5px #00ff41; opacity: 0.8; transform: skewX(-5deg); }
-            97% { text-shadow: 0 0 15px #00ff41; opacity: 1; transform: skewX(5deg); }
-            98% { text-shadow: 0 0 10px #00ff41; opacity: 0.9; transform: skewX(0deg); }
-            100% { text-shadow: 0 0 10px #00ff41, -2px 0 red, 2px 0 blue; }
-        }
-
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 15px rgba(0, 255, 65, 0.2); border-color: #00ff41; }
-            50% { box-shadow: 0 0 40px rgba(0, 255, 65, 0.8), inset 0 0 20px rgba(0, 255, 65, 0.4); border-color: #fff; }
-            100% { box-shadow: 0 0 15px rgba(0, 255, 65, 0.2); border-color: #00ff41; }
-        }
-
-        .container {
-            width: 90%;
-            max-width: 380px;
-            padding: 30px 25px;
-            border: 2px solid #00ff41;
-            border-radius: 20px;
-            background: rgba(0, 0, 0, 0.9);
-            box-shadow: 0 0 30px rgba(0, 255, 65, 0.2), inset 0 0 15px rgba(0, 255, 65, 0.1);
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .pulse-active { animation: pulseGlow 0.6s ease-out; }
-
-        .header-title {
-            font-size: 2.2rem;
-            letter-spacing: -1px;
-            margin-bottom: 25px;
-            font-weight: 900;
-            text-transform: uppercase;
-            color: #fff;
-            text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41;
-            animation: titleGlitch 5s infinite;
-        }
-
-        #password-display {
-            width: 100%;
-            min-height: 80px; /* Altezza minima dinamica */
-            background: #000;
-            border: 2px solid rgba(0, 255, 65, 0.6);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
-            cursor: pointer;
-            word-break: break-all; /* Fondamentale per andare a capo */
-            overflow-wrap: break-word;
-            padding: 15px;
-            letter-spacing: 2px;
-            box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
-            transition: all 0.2s ease;
-            font-weight: bold;
-            line-height: 1.2;
-            text-align: center;
-        }
-
-        .strength-container {
-            width: 100%;
-            height: 6px;
-            background: #1a1a1a;
-            margin-bottom: 12px;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        #strength-bar {
-            width: 0%;
-            height: 100%;
-            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        #crack-time {
-            font-size: 0.68rem;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            letter-spacing: 1px;
-            min-height: 2.5em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        .controls { text-align: left; }
-        
-        .control-group { margin-bottom: 20px; }
-
-        label { 
-            display: flex; 
-            justify-content: space-between; 
-            font-size: 0.95rem;
-            font-weight: bold;
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 8px;
-        }
-
-        input[type="range"] { 
-            width: 100%; 
-            height: 8px;
-            background: #1a1a1a; 
-            border-radius: 10px;
-            appearance: none;
-            outline: none;
-            margin: 10px 0;
-            cursor: pointer;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            appearance: none;
-            width: 26px;
-            height: 26px;
-            background: #fff;
-            border: 3px solid #00ff41;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #00ff41;
-        }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 25px;
-        }
-
-        .option-item {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 12px 5px;
-            border-radius: 10px;
-            border: 1px solid rgba(0, 255, 65, 0.2);
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-        }
-
-        .option-item.active {
-            background: rgba(0, 255, 65, 0.12);
-            border-color: #00ff41;
-            box-shadow: 0 0 12px rgba(0, 255, 65, 0.15);
-        }
-
-        .option-item input { display: none; }
-
-        .option-label {
-            font-size: 0.9rem;
-            font-weight: 900;
-            color: rgba(255, 255, 255, 0.4);
-            letter-spacing: 2px;
-            pointer-events: none;
-        }
-
-        .active .option-label { 
-            color: #00ff41; 
-            text-shadow: 0 0 8px rgba(0, 255, 65, 0.6); 
-        }
-
-        button {
-            width: 100%;
-            padding: 20px;
-            background: #00ff41;
-            color: #000;
-            border: none;
-            border-radius: 14px;
-            font-weight: 900;
-            font-size: 1.15rem;
-            text-transform: uppercase;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #008f25, 0 0 15px rgba(0, 255, 65, 0.4);
-            transition: all 0.1s;
-        }
-
-        button:active { transform: translateY(2px); box-shadow: 0 2px 0 #008f25; }
-
-        .hint {
-            font-size: 0.75rem; 
-            margin-top: 20px; 
-            opacity: 0.5; 
-            color: #fff; 
-            letter-spacing: 1px;
-        }
-    </style>
+    <title>Vibe Password Gen 1.8.0</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="container" id="main-container">
-        <div class="header-title">Vibe Password</div>
+    <main class="container" id="main-container">
         
-        <div id="password-display" onclick="copyToClipboard()">GENERA</div>
+        <button id="theme-switch" onclick="toggleTheme()" title="Cambia Vibe">◑</button>
+        <button id="info-btn" onclick="toggleStats(true)">i</button>
 
+        <h1 class="header-title">Vibe Password</h1>
+        
+        <div id="password-display" role="button" aria-label="Copia password" onclick="copyToClipboard()">GENERA</div>
+<div id="copy-hint-container" class="hidden">
+    <span class="hint-text">CLICCA PER COPIARE</span>
+</div>
         <div class="strength-container">
             <div id="strength-bar"></div>
         </div>
         
         <div id="crack-time">In attesa di input...</div>
 
-        <div class="controls">
+        <section class="controls">
             <div class="control-group">
-                <label>
+                <label for="length-slider">
                     <span>LUNGHEZZA</span>
                     <span id="length-val">16</span>
                 </label>
@@ -238,151 +35,42 @@
             </div>
 
             <div class="options-grid">
-                <div class="option-item active" onclick="toggleOption(this)">
-                    <input type="checkbox" id="opt-upper" checked>
+                <label class="option-item active">
+                    <input type="checkbox" id="opt-upper" checked onchange="handleToggle(this)">
                     <span class="option-label">ABC</span>
-                </div>
-                <div class="option-item active" onclick="toggleOption(this)">
-                    <input type="checkbox" id="opt-lower" checked>
+                </label>
+                <label class="option-item active">
+                    <input type="checkbox" id="opt-lower" checked onchange="handleToggle(this)">
                     <span class="option-label">abc</span>
-                </div>
-                <div class="option-item active" onclick="toggleOption(this)">
-                    <input type="checkbox" id="opt-numbers" checked>
+                </label>
+                <label class="option-item active">
+                    <input type="checkbox" id="opt-numbers" checked onchange="handleToggle(this)">
                     <span class="option-label">123</span>
-                </div>
-                <div class="option-item active" onclick="toggleOption(this)">
-                    <input type="checkbox" id="opt-symbols" checked>
+                </label>
+                <label class="option-item active">
+                    <input type="checkbox" id="opt-symbols" checked onchange="handleToggle(this)">
                     <span class="option-label">$%&</span>
-                </div>
+                </label>
             </div>
-        </div>
+        </section>
 
-        <button onclick="generate()">genera</button>
-        <div class="hint">CLICCA PER COPIARE</div>
+        <button type="button" class="main-generate" onclick="generate()">GENERA</button>
+    </main>
+
+    <div id="stats-overlay" class="overlay">
+        <div class="overlay-content">
+            <button class="close-btn" onclick="toggleStats(false)">×</button>
+            <h2 style="margin-bottom: 20px; font-family: var(--font-ui); color: #fff;">Analisi Tecnica</h2>
+            
+            <div id="stats-data">
+                </div>
+            
+            <p class="stats-explanation">
+                La stima si basa su un attacco brute-force che testa 1.000 miliardi (1 trilione) di combinazioni al secondo.
+            </p>
+        </div>
     </div>
 
-    <script>
-        const charsets = {
-            upper: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-            lower: "abcdefghijklmnopqrstuvwxyz",
-            numbers: "0123456789",
-            symbols: "!@#$%^&*()_+[]{}|;:,.<>?"
-        };
-
-        let hasGenerated = false;
-
-        function toggleOption(el) {
-            const checkbox = el.querySelector('input');
-            checkbox.checked = !checkbox.checked;
-            el.classList.toggle('active');
-            updateUI();
-        }
-
-        function getActiveCharset() {
-            let active = "";
-            if (document.getElementById('opt-upper').checked) active += charsets.upper;
-            if (document.getElementById('opt-lower').checked) active += charsets.lower;
-            if (document.getElementById('opt-numbers').checked) active += charsets.numbers;
-            if (document.getElementById('opt-symbols').checked) active += charsets.symbols;
-            return active || charsets.lower;
-        }
-        
-        const feedbackMessages = {
-            weak: ["Livello: Imbarazzante.", "Troppo semplice.", "Vulnerabile.", "Inutile."],
-            medium: ["Moderata.", "Accettabile.", "Dura quanto un biscotto.", "Sufficiente."],
-            strong: ["Solida crittografia.", "Inizia ad essere seria.", "Protocollo rispettato.", "Sicura."],
-            unbreakable: ["Livello Dio.", "Inviolabile.", "Quantistica.", "Muro di titanio."]
-        };
-
-        function updateUI() {
-            const slider = document.getElementById('length-slider');
-            const val = parseInt(slider.value);
-            const display = document.getElementById('password-display');
-            const bar = document.getElementById('strength-bar');
-            const crackText = document.getElementById('crack-time');
-            
-            document.getElementById('length-val').innerText = val;
-            
-            const percentage = ((val - slider.min) / (slider.max - slider.min)) * 100;
-            slider.style.background = `linear-gradient(to right, #00ff41 ${percentage}%, #1a1a1a ${percentage}%)`;
-
-            // Ridimensionamento font più aggressivo per lunghezze elevate
-            if (val > 40) display.style.fontSize = "0.75rem";
-            else if (val > 24) display.style.fontSize = "0.95rem";
-            else display.style.fontSize = "1.25rem";
-
-            const activeCount = [
-                document.getElementById('opt-upper').checked,
-                document.getElementById('opt-lower').checked,
-                document.getElementById('opt-numbers').checked,
-                document.getElementById('opt-symbols').checked
-            ].filter(Boolean).length;
-
-            // Ricalibrato punteggio per la nuova lunghezza max
-            const score = val * (activeCount * 0.5);
-            const strengthPercent = Math.min((score / 60) * 100, 100);
-            bar.style.width = strengthPercent + "%";
-
-            let color = "";
-            let type = "";
-            
-            if (strengthPercent < 30) { type = "weak"; color = "#ff3b30"; } 
-            else if (strengthPercent < 60) { type = "medium"; color = "#ffcc00"; } 
-            else if (strengthPercent < 85) { type = "strong"; color = "#4cd964"; } 
-            else { type = "unbreakable"; color = "#00ff41"; } 
-            
-            bar.style.backgroundColor = color;
-            bar.style.boxShadow = `0 0 12px ${color}`;
-            
-            if (hasGenerated) {
-                crackText.style.opacity = "1";
-                crackText.innerText = feedbackMessages[type][0];
-                crackText.style.color = color;
-                crackText.style.textShadow = `0 0 8px ${color}`;
-            }
-        }
-
-        function generate() {
-            hasGenerated = true;
-            const container = document.getElementById('main-container');
-            const length = document.getElementById('length-slider').value;
-            const display = document.getElementById('password-display');
-            const currentCharset = getActiveCharset();
-            
-            container.classList.remove('pulse-active');
-            void container.offsetWidth; 
-            container.classList.add('pulse-active');
-
-            updateUI();
-
-            let finalPass = "";
-            for (let i = 0; i < length; i++) {
-                finalPass += currentCharset.charAt(Math.floor(Math.random() * currentCharset.length));
-            }
-
-            let step = 0;
-            const timer = setInterval(() => {
-                display.innerText = finalPass.split("").map((char, index) => {
-                    if (index < step) return char;
-                    return currentCharset.charAt(Math.floor(Math.random() * currentCharset.length));
-                }).join("");
-                if (step >= length) clearInterval(timer);
-                step += 0.5;
-            }, 30);
-        }
-
-        function copyToClipboard() {
-            const display = document.getElementById('password-display');
-            const text = display.innerText;
-            if (text === "GENERA" || text === "COPIATA!") return;
-            navigator.clipboard.writeText(text).then(() => {
-                const oldText = display.innerText;
-                display.innerText = "COPIATA!";
-                setTimeout(() => { display.innerText = oldText; }, 1000);
-            });
-        }
-
-        updateUI();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
